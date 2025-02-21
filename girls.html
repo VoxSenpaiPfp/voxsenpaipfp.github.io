@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girls Section - VoxSenpai.pfp</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffb6c1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        .nav a {
+            padding: 10px 20px;
+            background: #ff69b4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 90%;
+        }
+        .gallery img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="index.html">Home</a>
+    </div>
+    <h1>Girls Anime PFPs</h1>
+    <div class="gallery" id="girlsGallery"></div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            const gallery = document.getElementById("girlsGallery");
+            const imageCount = 500;
+            const uniqueImages = new Set();
+            const baseURL = "https://api.waifu.pics/sfw/waifu";
+            const fetchPromises = [];
+            
+            for (let i = 0; i < imageCount * 2; i++) { // Fetch extra to avoid duplicates
+                fetchPromises.push(
+                    fetch(baseURL)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!uniqueImages.has(data.url) && uniqueImages.size < imageCount) {
+                                uniqueImages.add(data.url);
+                                const img = document.createElement("img");
+                                img.src = data.url;
+                                img.alt = "Anime Girl PFP";
+                                img.loading = "lazy";
+                                img.addEventListener("click", () => {
+                                    const link = document.createElement("a");
+                                    link.href = data.url;
+                                    link.download = "Anime_Girl_PFP.jpg";
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                });
+                                gallery.appendChild(img);
+                            }
+                        })
+                        .catch(error => console.error("Error loading image:", error))
+                );
+            }
+            await Promise.all(fetchPromises);
+        });
+    </script>
+</body>
+</html>
